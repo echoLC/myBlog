@@ -4,7 +4,7 @@ const marked = require('marked')
 // 将post的content从markdown转换成html
 Post.plugin('contentToHtml', {
   afterFind: (posts) => {
-    if (posts && posts.length) {
+    if (posts) {
       return posts.map((post) => {
         post.content = marked(post.content)
         return post
