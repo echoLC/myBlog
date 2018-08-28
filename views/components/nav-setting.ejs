@@ -1,0 +1,18 @@
+<div class="nav-setting">
+  <div class="ui buttons">
+    <div class="ui floating dropdown button">
+      <i class="icon bars"></i>
+      <ul class="menu">
+        <% if (user) { %>
+          <li class="inline-block item"><a href="/posts?author=<%= user._id %>">个人主页</a></li>
+          <li class="divider inline-block item"></li>
+          <li class="inline-block item"><a href="/posts/create">发表文章</a></li>
+          <li class="inline-block item"><a href="/signout">登出</a></li>
+        <% } else { %>
+        <li class="inline-block item"><a href="/signin">登录</a></li>
+        <li class="inline-block item"><a href="/signup">注册</a></li>
+        <% } %>           
+      </ul>
+    </div>  
+  </div>    
+</div>
