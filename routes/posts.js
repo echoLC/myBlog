@@ -4,11 +4,11 @@ const router = express.Router()
 
 const postsModel = require('../models/posts')
 
-router.get('/', (req, res) => {
+router.get('/', (req, res, next) => {
   const author = req.query.author
   postsModel.getPosts(author).then((posts) => {
     res.render('posts', {
-      posts
+      posts: posts || []
     })
   }).catch(next)
 })
@@ -36,8 +36,7 @@ router.post('/create', checkLogin, (req, res, next) => {
   const post = {
     title,
     content,
-    author,
-    createDate: +new Date()
+    author
   }
 
   postsModel.create(post).then((result) => {
@@ -67,6 +66,8 @@ router.get('/:postId', (req, res, next) => {
 
 router.get('/:postId/edit', checkLogin, (req, res, next) => {
   const postId = req.params.postId
+  const author = req.session.user._id
+
   postsModel.getRawPostById(postId).then((post) => {
     if (!post) {
       throw new Error('该文章不存在')
@@ -98,7 +99,7 @@ router.post('/:postId/edit', checkLogin, (req, res, next) => {
     return res.redirect('back')
   }
 
-  PostModel.getRawPostById(postId).then((post) => {
+  postsModel.getRawPostById(postId).then((post) => {
     if (!post) {
       throw new Error('文章不存在')
     }
@@ -108,15 +109,16 @@ router.post('/:postId/edit', checkLogin, (req, res, next) => {
     postsModel.updatePost(postId, { title, content }).then(() => {
       req.flash('success', '更新文章成功')
       
-      res.redirect('back')
+      res.redirect(`/posts/${postId}`)
     }).catch(next)
   })
 })
 
-router.get(':/postId/remove', checkLogin, (req, res, next) => {
+router.get('/:postId/remove', checkLogin, (req, res, next) => {
   const postId = req.params.postId
+  const author = req.session.user._id
 
-  PostModel.getRawPostById(postId).then((post) => {
+  postsModel.getRawPostById(postId).then((post) => {
     if (!post) {
       throw new Error('文章不存在')
     }

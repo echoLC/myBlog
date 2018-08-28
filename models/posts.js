@@ -4,10 +4,12 @@ const marked = require('marked')
 // 将post的content从markdown转换成html
 Post.plugin('contentToHtml', {
   afterFind: (posts) => {
-    return posts.map((post) => {
-      post.content = marked(post.content)
-      return post
-    })
+    if (posts && posts.length) {
+      return posts.map((post) => {
+        post.content = marked(post.content)
+        return post
+      })
+    }
   },
   afterFindOne: (post) => {
     if (post) {
@@ -36,6 +38,7 @@ exports.getPosts = function getPosts (author) {
   }
   return Post.find(query)
     .populate({ path: 'author', model: 'User' })
+    .sort({ _id: -1 })
     .addCreatedAt()
     .contentToHtml()
     .exec()
