@@ -54,13 +54,15 @@ app.use(formidable({
   keepExtensions: true
 }))
 
-app.use((err, req, res, next) => {
-  console.error(err.stack)
-  res.status(500).send(err)
-})
-
 // 路由
 routes(app)
+
+// 处理错误
+app.use((err, req, res, next) => {
+  console.error(err)
+  req.flash('error', err.message)
+  res.redirect('/posts')
+})
 
 // 监听端口，启动程序
 app.listen(config.port, function () {
