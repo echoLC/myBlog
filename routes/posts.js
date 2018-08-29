@@ -3,12 +3,13 @@ const checkLogin = require('../middlewares/check').checkLogin
 const router = express.Router()
 
 const postsModel = require('../models/posts')
+const commentModel = require('../models/comments')
 
 router.get('/', (req, res, next) => {
   const author = req.query.author
   postsModel.getPosts(author).then((posts) => {
     res.render('posts', {
-      posts: posts || []
+      posts: posts
     })
   }).catch(next)
 })
@@ -51,15 +52,18 @@ router.get('/:postId', (req, res, next) => {
 
   Promise.all([
     postsModel.getPostById(postId),
+    commentModel.getComments(postId),
     postsModel.countPv(postId)
   ]).then((result) => {
     const post = result[0]
+    const comments = result[1]
     if (!post) {
       req.flash('error', '该文章不存在')
       res.redirect('back')
     }
     res.render('post', {
-      post
+      post,
+      comments
     })
   }).catch(next)
 })
