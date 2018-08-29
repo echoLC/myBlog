@@ -3,6 +3,9 @@
 # Logs
 *.log
 
+config/*
+!config/default.*
+
 # Runtime data
 pids
 *.pid
